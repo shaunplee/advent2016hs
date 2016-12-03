@@ -1,0 +1,94 @@
+
+./app/Main.hs,52
+module Main Main0,1
+main main7,8
+main main8,9
+
+./Setup.hs,15
+main main1,2
+
+./src/Bathroom.hs,454
+module Bathroom Bathroom0,1
+bathroomCode bathroomCode4,5
+bathroomCode bathroomCode5,6
+posToChar posToChar7,8
+posToChar posToChar8,9
+instToPos instToPos19,20
+instToPos instToPos20,21
+move move22,23
+move move23,24
+dBathroomCode dBathroomCode34,35
+dBathroomCode dBathroomCode35,36
+dInstToPos dInstToPos39,40
+dInstToPos dInstToPos40,41
+dPosToChar dPosToChar42,43
+dPosToChar dPosToChar43,44
+dMove dMove58,59
+dMove dMove59,60
+
+./src/Lib.hs,65
+module LibLib0,1
+someFunc someFunc4,5
+someFunc someFunc5,6
+
+./src/Navigation.hs,1171
+module Navigation Navigation0,1
+navigateDistance navigateDistance5,6
+navigateDistance navigateDistance6,7
+newtype Direction Direction13,14
+newtype Direction a = Direction Direction13,14
+instance instance16,17
+newtype Position Position19,20
+newtype Position = Position Position19,20
+newtype Distance Distance21,22
+newtype Distance = Distance Distance21,22
+data Turn Turn24,25
+data Turn = LeftTurn LeftTurn24,25
+data Turn = LeftTurn | RightTurnRightTurn24,25
+data Instruction Instruction27,28
+data Instruction = Instruction Instruction27,28
+data State State30,31
+data State = State State30,31
+distance distance32,33
+distance distance33,34
+initState initState35,36
+initState initState36,37
+move move38,39
+move move39,40
+turn turn45,46
+turn turn46,47
+parseInstructions parseInstructions55,56
+parseInstructions parseInstructions56,57
+parseInstruction parseInstruction61,62
+parseInstruction parseInstruction62,63
+parseNextInstruction parseNextInstruction67,68
+parseNextInstruction parseNextInstruction68,69
+parseTurn parseTurn72,73
+parseTurn parseTurn73,74
+parseDist parseDist76,77
+parseDist parseDist77,78
+
+./src/Triangles.hs,706
+module Triangles Triangles0,1
+newtype Triangle Triangle5,6
+newtype Triangle = Triangle Triangle5,6
+countValidTriangles countValidTriangles8,9
+countValidTriangles countValidTriangles9,10
+validTriangle validTriangle11,12
+validTriangle validTriangle12,13
+parseInput parseInput16,17
+parseInput parseInput17,18
+parseLine parseLine21,22
+parseLine parseLine22,23
+parseTriangle parseTriangle24,25
+parseTriangle parseTriangle25,26
+countValidTrianglesCols countValidTrianglesCols36,37
+countValidTrianglesCols countValidTrianglesCols37,38
+parseInputCol parseInputCol40,41
+parseInputCol parseInputCol41,42
+parseThreeLines parseThreeLines45,46
+parseThreeLines parseThreeLines46,47
+
+./test/Spec.hs,30
+main main0,1
+main main1,2
