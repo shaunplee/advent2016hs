@@ -7,6 +7,7 @@ import qualified Data.ByteString.Lazy      as LB
 import           Data.ByteString.Lazy.UTF8 (fromString)
 import           Data.Char
 import           Data.Map.Strict
+import           Text.Trifecta
 
 md5 :: LB.ByteString -> Digest MD5
 md5 = hashlazy
@@ -27,6 +28,16 @@ mineRecur sec c =
     in case show $ md5 try of
         ('0':'0':'0':'0':'0':x:_) -> (x, c + 1)
         _                         -> mineRecur sec (c + 1)
+
+-- mineRecur sec c =
+--     case parseString parser mempty (show (LB.append sec (fromString $ show c))) of
+--         Success x -> (x, c + 1)
+--         Failure _ -> mineRecur sec (c + 1)
+-- parser :: Parser Char
+-- parser = do
+--     _ <- string "00000"
+--     x <- characterChar
+--     return x
 
 -- Part 2
 findAdvPassword :: String -> String
