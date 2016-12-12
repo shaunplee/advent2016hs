@@ -1,10 +1,11 @@
 module Main where
 
+import           Assembunny
 --import           Bathroom
 --import           Bots
 --import           Compression
 --import           Door
-import           Microchips
+--import           Microchips
 --import           Password
 --import           Rooms
 --import           Signal
@@ -15,7 +16,7 @@ import           System.Environment (getArgs)
 
 main :: IO ()
 main = do
---    args <- getArgs
---    content <- readFile (head args)
+    args <- getArgs
+    content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
-    print $ Microchips.partOneRun
+    print $ Assembunny.partOne content
