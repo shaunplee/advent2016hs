@@ -4,9 +4,11 @@ module Main where
 --import           Bathroom
 --import           Bots
 --import           Compression
-import           Cubicles
+--import           Cubicles
 --import           Door
+import           Dragon
 --import           Microchips
+--import           OneTimePad
 --import           Password
 --import           Rooms
 --import           Signal
@@ -17,7 +19,7 @@ import           System.Environment (getArgs)
 
 main :: IO ()
 main = do
---    args <- getArgs
+    args <- getArgs
 --    content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
-    print $ Cubicles.reachablePositions
+    print $ Dragon.partTwo
