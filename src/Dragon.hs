@@ -5,18 +5,18 @@ import           Data.Vector.Unboxed as V
 
 import           Debug.Trace         (trace)
 
-newtype Bits = Bits (V.Vector Bool)
+newtype Bits = Bits [Bool]
 
 instance Show Bits where
-    show (Bits a) = toList $ V.map (\x -> if x then '1' else '0') a
+    show (Bits a) = Prelude.map (\x -> if x then '1' else '0') a
 
 instance Monoid Bits where
-    mempty = Bits V.empty
-    mappend (Bits x) (Bits y) = Bits (x V.++ y)
+    mempty = Bits mempty
+    mappend (Bits x) (Bits y) = Bits (x Prelude.++ y)
 
 expandOne :: Bits -> Bits
-expandOne (Bits a) = let b = V.reverse $ V.map not a
-    in Bits $ V.concat [a, V.singleton False, b]
+expandOne (Bits a) = let b = Prelude.reverse $ Prelude.map not a
+    in Bits $ Prelude.concat [a, False : b]
 
 fromString :: String -> Maybe Bits
 fromString s = do
@@ -25,16 +25,16 @@ fromString s = do
                               '1' -> Just True
                               _   -> Nothing)
                          s
-    return $ Bits $ fromList xs
+    return $ Bits  xs
 
 expandToFill :: Bits -> Int -> Bits
 expandToFill b@(Bits inputBits) diskSize =
-    if V.length inputBits >= diskSize
-    then Bits $ V.take diskSize inputBits
+    if Prelude.length inputBits >= diskSize
+    then Bits $ Prelude.take diskSize inputBits
     else expandToFill (expandOne b) diskSize
 
 reduction :: Bits -> Bits
-reduction (Bits xs) = Bits $ V.fromList $ reductionHelp (V.toList xs)
+reduction (Bits xs) = Bits $ reductionHelp xs
     where reductionHelp []       = []
           reductionHelp (x:y:ys) = (x == y) : reductionHelp ys
 
@@ -45,10 +45,10 @@ reduction (Bits xs) = Bits $ V.fromList $ reductionHelp (V.toList xs)
   --       if odd $ V.length inputBits then c else trace (show $ V.length inputBits) checksumHelp (reduction c)
 
 checksum :: Bits -> Bits
-checksum b = Prelude.head $ Prelude.dropWhile (\(Bits x) -> trace (show $ V.length x) (even $ V.length x)) (iterate reduction b)
+checksum b = Prelude.head $ Prelude.dropWhile (\(Bits x) -> trace (show $ Prelude.length x) (even $ Prelude.length x)) (iterate reduction b)
 
 partTwo :: Bits
-partTwo = let a = fromMaybe (Bits $ V.singleton False)
+partTwo = let a = fromMaybe (Bits [False])
                             (fromString "10111100110001111")
           in
               checksum $ expandToFill a 35651584
