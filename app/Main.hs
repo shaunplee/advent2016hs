@@ -7,12 +7,14 @@ module Main where
 --import           Cubicles
 --import           Door
 --import           Dragon
+import           Firewall
 --import           Microchips
 --import           OneTimePad
 --import           Password
+--import           Presents
 --import           Rooms
 --import           Signal
-import           TwoSteps
+--import           TwoSteps
 --import           IP7
 import           System.Environment (getArgs)
 --import           Triangles
@@ -20,7 +22,7 @@ import           System.Environment (getArgs)
 
 main :: IO ()
 main = do
---    args <- getArgs
---    content <- readFile (head args)
+    args <- getArgs
+    content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
-    print $ TwoSteps.partOne TwoSteps.initState
+    print $ Firewall.partTwo content

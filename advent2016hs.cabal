@@ -23,10 +23,12 @@ library
                      , Cubicles
                      , Door
                      , Dragon
+                     , Firewall
                      , IP7
                      , Microchips
                      , OneTimePad
                      , Password
+                     , Presents
                      , Rooms
                      , Signal
                      , Triangles
