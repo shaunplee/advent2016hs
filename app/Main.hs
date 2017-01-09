@@ -7,12 +7,15 @@ module Main where
 --import           Cubicles
 --import           Door
 --import           Dragon
-import           Firewall
+--import           Firewall
+--import           Grid
 --import           Microchips
 --import           OneTimePad
 --import           Password
 --import           Presents
 --import           Rooms
+--import           Safe
+import           Scrambled
 --import           Signal
 --import           TwoSteps
 --import           IP7
@@ -25,4 +28,4 @@ main = do
     args <- getArgs
     content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
-    print $ Firewall.partTwo content
+    print $ Scrambled.partTwo content "fbgdceah"

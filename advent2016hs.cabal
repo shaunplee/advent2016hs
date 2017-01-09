@@ -24,12 +24,15 @@ library
                      , Door
                      , Dragon
                      , Firewall
+                     , Grid
                      , IP7
                      , Microchips
                      , OneTimePad
                      , Password
                      , Presents
                      , Rooms
+                     , Safe
+                     , Scrambled
                      , Signal
                      , Triangles
                      , TwoSteps
