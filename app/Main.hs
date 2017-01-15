@@ -1,5 +1,6 @@
 module Main where
 
+import           AirDuct
 --import           Assembunny
 --import           Bathroom
 --import           Bots
@@ -15,7 +16,7 @@ module Main where
 --import           Presents
 --import           Rooms
 --import           Safe
-import           Scrambled
+--import           Scrambled
 --import           Signal
 --import           TwoSteps
 --import           IP7
@@ -28,4 +29,4 @@ main = do
     args <- getArgs
     content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
-    print $ Scrambled.partTwo content "fbgdceah"
+    print $ AirDuct.partOne content

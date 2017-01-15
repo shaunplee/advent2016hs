@@ -11,6 +11,8 @@ data Command = Cpy Expr Expr
              | Dec Expr
              | Jnz Expr Expr
              | Tgl Expr
+             | Mul Expr Expr
+             | Add Expr Expr
              | Noop
     deriving Show
 
@@ -36,6 +38,12 @@ newtype State = State (Integer, Registers, Instructions)
 initRegisters :: Registers
 initRegisters = Registers $ M.fromList [(A, 12), (B, 0), (C, 0), (D, 0)]
 
+initState :: State
+initState = State ( 0
+                  , initRegisters
+                  , Instructions $ fmap parseLine (V.fromList (lines inputCmds))
+                  )
+
 partOne :: String -> State
 partOne input = let cs = Instructions $
                          fmap parseLine (V.fromList (lines input))
@@ -52,6 +60,10 @@ runCommands s@(State (pc, rs, Instructions cs)) =
     then s
     else runCommands (runNextCommand s)
 
+runNSteps :: Int -> State -> State
+runNSteps 0 is = is
+runNSteps n is = runNSteps (n - 1) (runNextCommand is)
+
 runNextCommand :: State -> State
 runNextCommand s@(State (pc, rs, i@(Instructions cs))) =
     let cmd = cs V.! fromInteger pc
@@ -64,6 +76,8 @@ runNextCommand s@(State (pc, rs, i@(Instructions cs))) =
                        in
                            State (pc + jump, rs, i)
             Tgl x -> execTgl x s
+            Mul x y -> State (pc + 1, execMul x y rs, i)
+            Add x y -> State (pc + 1, execAdd x y rs, i)
             Noop -> State (pc + 1, rs, i)
 
 execCopy :: Expr -> Expr -> Registers -> Registers
@@ -96,6 +110,34 @@ execJnz (Register r) jump (Registers rs) =
         Nothing -> 1
         Just x  -> if x == 0 then 1 else readValue (Registers rs) jump
 
+execMul :: Expr -> Expr -> Registers -> Registers
+execMul (Register r) (Register s) (Registers rs) =
+    let newVal = do x <- M.lookup r rs
+                    y <- M.lookup s rs
+                    return $ x * y
+    in case newVal of
+        Nothing -> error "register not found"
+        Just x  -> Registers (M.insert r x rs)
+execMul (Register r) (Value v) (Registers rs) =
+    case M.lookup r rs of
+        Nothing -> error "register not found"
+        Just x  -> Registers $ M.insert r (x * v) rs
+
+execAdd :: Expr -> Expr -> Registers -> Registers
+execAdd (Register r) (Register s) (Registers rs) =
+    let newVal = do
+            x <- M.lookup r rs
+            y <- M.lookup s rs
+            return $ x * y
+    in
+        case newVal of
+            Nothing -> Registers rs
+            Just x  -> Registers $ M.insert r x rs
+execAdd (Register r) (Value v) (Registers rs) =
+    case M.lookup r rs of
+        Nothing -> Registers rs
+        Just x  -> Registers $ M.insert r (x + v) rs
+
 execTgl :: Expr -> State -> State
 execTgl x (State (pc, Registers rs, Instructions cs)) =
     let offset = case x of
@@ -111,6 +153,8 @@ execTgl x (State (pc, Registers rs, Instructions cs)) =
                                    [ (fromInteger (pc + offset), newTarget) ]
                            in
                                State (pc + 1, Registers rs, Instructions newCs)
+
+
 
 tglCmd :: Command -> Command
 tglCmd (Inc x)   = Dec x
@@ -200,3 +244,5 @@ tglParser = do
 inputData = "cpy 1 a\ncpy 1 b\ncpy 26 d\njnz c 2\njnz 1 5\ncpy 7 c\ninc d\ndec c\njnz c -2\ncpy a c\ninc a\ndec b\njnz b -2\ncpy c b\ndec d\njnz d -6\ncpy 18 c\ncpy 11 d\ninc a\ndec d\njnz d -2\ndec c\njnz c -5"
 
 testInput = "cpy -2 a\ntgl a\ntgl a\ntgl a\ncpy 1 a\ndec a\ndec a"
+
+inputCmds = "cpy a b\ndec b\ncpy a d\ncpy 0 a\ncpy b c\n\ninc a\ndec c\njnz c -2\ndec d\njnz d -5\ndec b\ncpy b c\ncpy c d\ndec d\ninc c\njnz d -2\ntgl c\ncpy -16 c\njnz 1 c\ncpy 87 c\njnz 97 d\ninc a\ninc d\njnz d -2\ninc c\njnz c -5\n"
