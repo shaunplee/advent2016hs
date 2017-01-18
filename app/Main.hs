@@ -1,6 +1,7 @@
 module Main where
 
 import           AirDuct
+--import           AirDuctReddit
 --import           Assembunny
 --import           Bathroom
 --import           Bots
@@ -29,4 +30,5 @@ main = do
     args <- getArgs
     content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
-    print $ AirDuct.partOne content
+--    print $ AirDuctReddit.partTwo content "1234567"
+    print $ AirDuct.partTwo content
