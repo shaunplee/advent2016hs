@@ -1,6 +1,6 @@
 module Main where
 
-import           AirDuct
+--import           AirDuct
 --import           AirDuctReddit
 --import           Assembunny
 --import           Bathroom
@@ -10,7 +10,7 @@ import           AirDuct
 --import           Door
 --import           Dragon
 --import           Firewall
---import           Grid
+import           Grid
 --import           Microchips
 --import           OneTimePad
 --import           Password
@@ -31,4 +31,4 @@ main = do
     content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
 --    print $ AirDuctReddit.partTwo content "1234567"
-    print $ AirDuct.partTwo content
+    print $ Grid.partTwo content 100

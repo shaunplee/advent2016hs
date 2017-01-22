@@ -1,29 +1,36 @@
 module Grid where
 
-import qualified Data.Heap       as H
-import qualified Data.Map.Strict as M
+import qualified Data.Heap     as H
+import qualified Data.Map.Lazy as M
+import qualified Data.Set      as S
+import           Debug.Trace
 import           Text.Trifecta
 
-data Node = Node { pos   :: (Integer, Integer),
-                   size  :: Integer,
-                   used  :: Integer,
-                   avail :: Integer,
-                   use   :: Integer }
+data Node = Node { pos   :: (Integer, Integer)
+                 , size  :: Integer
+                 , used  :: Integer
+                 , avail :: Integer
+                 , use   :: Integer
+                 }
     deriving Show
+
+data Space = Open | Blocked | Blank | Data
+    deriving (Eq, Show)
 
 instance Eq Node where
     (==) x y = pos x == pos y
 
 data State = State { steps     :: Integer
                    , loc       :: (Integer, Integer)
-                   , dst       :: (Integer, Integer)
-                   , nodeState :: M.Map (Integer, Integer) Node
+                   , nodeState :: M.Map (Integer, Integer) Space
+                   , prev      :: Maybe (Integer, Integer)
                    }
     deriving (Eq, Show)
 
 instance Ord State where
-    (<=) s1 s2 = steps s1 + estDist (loc s1) (dst s1) <=
-        steps s2 + estDist (loc s2) (dst s2)
+--    (<=) s1 s2 = steps s1 + estDist (loc s1) (0, 0) <=
+--        steps s2 + estDist (loc s2) (0, 0)
+    (<=) s1 s2 = steps s1 <= steps s2
 
 findViablePairs :: M.Map (Integer, Integer) Node -> [(Node, Node)]
 findViablePairs ns = concatMap (\x -> zip (repeat x)
@@ -47,26 +54,97 @@ partOne s = let nodes = parseInput s
 estDist :: (Integer, Integer) -> (Integer, Integer) -> Integer
 estDist (x1, y1) (x2, y2) = abs (x2 - x1) + abs (y2 - y1)
 
-initialState :: M.Map (Integer, Integer) Node -> H.MinHeap State
-initialState ns = H.singleton (State 0 (x, 0) (0, 0) ns)
+initialState :: M.Map (Integer, Integer) Node -> Integer -> H.MinHeap State
+initialState ns thresh =
+    H.singleton (State 0 (x, 0) (simplifyMap ns thresh) Nothing)
   where
-    (x,_) = last $ M.keys ns
+    (x, _) = last $ M.keys ns
 
-partTwo :: String -> Integer
-partTwo s = let nodes = parseInput s
-                start = initialState nodes
+partTwo :: String -> Integer -> Integer
+partTwo s thresh = let nodes = parseInput s
             in
-                partTwoHelp start
+                partTwoHelp (initialState nodes thresh) S.empty
 
-partTwoHelp :: H.MinHeap State -> Integer
-partTwoHelp moves = case H.view moves of
-    Nothing -> error "no more moves????"
-    Just (nextMove, restMoves) ->
-        if (loc nextMove) == (0,0)
-        then (steps nextMove)
-        else let newPoints = undefined
-             in undefined
+partTwoHelp :: H.MinHeap State -> S.Set (Integer, Integer) -> Integer
+partTwoHelp moves visited =
+    case H.view moves of
+        Nothing -> error "no more moves????"
+        Just (curMove, restMoves) ->
+            if loc curMove == (0, 0)
+            then steps curMove
+            else let (x, y) = loc curMove
+                     curNodes = nodeState curMove
+                     blankSpace = head $ M.keys (M.filter (== Blank) curNodes)
+                     newDataLocs = filter (\n -> n `M.member` curNodes &&
+                                               n `S.notMember` visited)
+                                          [ (x - 1, y)
+                                          , (x + 1, y)
+                                          , (x, y - 1)
+                                          , (x, y + 1)
+                                          ]
+                     newVisited = S.union visited (S.fromList newDataLocs)
 
+                     updateState p = M.alter (const $ Just Blank) (loc curMove) $
+                         M.alter (const $ Just Data) p $
+                             M.alter (const $ Just Open) blankSpace curNodes
+
+                     newMove :: (Integer, Integer) -> State
+                     newMove nLoc = State (steps curMove
+                                               + shortestPath curNodes
+                                                              blankSpace
+                                                              nLoc
+                                               + 1)
+                                          nLoc
+                                          (updateState nLoc)
+                                          (Just $ loc curMove)
+
+                     newStates = map newMove newDataLocs
+
+                 in
+                     --trace (show (loc curMove) ++ ":" ++ show (steps curMove)) $
+                     partTwoHelp (H.union (H.fromList newStates) restMoves)
+                                 newVisited
+
+simplifyMap :: M.Map (Integer, Integer) Node
+            -> Integer
+            -> M.Map (Integer, Integer) Space
+simplifyMap m thresh = M.filter (/= Blocked) $
+    M.fromList (map (\(x, y) -> ( x
+                                , case () of
+                                    _
+                                        | x ==
+                                              ( fst $
+                                                  last $ M.keys m
+                                              , 0
+                                              ) -> Data
+                                        | used y == 0 -> Blank
+                                        | used y < thresh -> Open
+                                        | otherwise -> Blocked
+                                ))
+                    (M.toList m))
+
+shortestPath :: M.Map (Integer, Integer) Space
+             -> (Integer, Integer)
+             -> (Integer, Integer)
+             -> Integer
+shortestPath m from to =
+    go S.empty (S.singleton from) 0
+  where
+    go visited frontier s =
+        if S.member to frontier
+        then s
+        else let newFrontier = S.fromList $
+                     filter (`S.notMember` visited) (concatMap nbrs frontier)
+                 newVisited = S.union visited frontier
+             in
+                 go newVisited newFrontier (s + 1)
+    nbrs (x, y) = let cand = [ (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1) ]
+                  in
+                      filter (\p -> case M.lookup p m of
+                                  Just Open  -> True
+                                  Just Blank -> True
+                                  _          -> False)
+                             cand
 
 move :: M.Map (Integer, Integer) Node
      -> Node
