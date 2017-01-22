@@ -5,12 +5,13 @@ module Main where
 --import           Assembunny
 --import           Bathroom
 --import           Bots
+import           Clock
 --import           Compression
 --import           Cubicles
 --import           Door
 --import           Dragon
 --import           Firewall
-import           Grid
+--import           Grid
 --import           Microchips
 --import           OneTimePad
 --import           Password
@@ -27,8 +28,8 @@ import           System.Environment (getArgs)
 
 main :: IO ()
 main = do
-    args <- getArgs
-    content <- readFile (head args)
+--    args <- getArgs
+--    content <- readFile (head args)
 --    print $ Password.findAdvPassword (head args)
 --    print $ AirDuctReddit.partTwo content "1234567"
-    print $ Grid.partTwo content 100
+    print $ Clock.partOne

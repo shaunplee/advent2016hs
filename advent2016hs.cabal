@@ -21,6 +21,7 @@ library
                      , Assembunny
                      , Bathroom
                      , Bots
+                     , Clock
                      , Compression
                      , Cubicles
                      , Door
